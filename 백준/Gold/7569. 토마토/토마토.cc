@@ -1,82 +1,82 @@
 #include <bits/stdc++.h>
-#define MAXSIZE 101
-using namespace std;
-int toM3,toN3,toH3;
-int inBoxSizeV3[MAXSIZE][MAXSIZE][MAXSIZE]; //면, 행, 열 순서
-queue<tuple<int,int,int>> tomatoQV3;    //면, 행, 열 순서
-int tomatoMaxTimeV3 = 0;
+#define fast ios::sync_with_stdio(false),cin.tie(NULL), cout.tie(NULL)
 
-void toBFSV3(){
-    int dX[] = {1,-1,0,0,0,0};
-    int dY[] = {0,0,1,-1,0,0};
-    int dZ[] = {0,0,0,0,1,-1};
+using namespace std;
+
+int N,M,H;
+int arr[101][101][101];
+queue<tuple<int,int,int>> qm;
+int cnt = 0;
+int dx[] = {0,0,1,-1,0,0};
+int dy[] = {1,-1,0,0,0,0};
+int dz[] = {0,0,0,0,1,-1};
+
+
+void bfs(){
+    queue<tuple<int,int,int>> q;
     
-    
-    while (!tomatoQV3.empty()) {
-        int z = get<0>(tomatoQV3.front());
-        int x = get<1>(tomatoQV3.front());
-        int y = get<2>(tomatoQV3.front());
-        tomatoQV3.pop();
+    while (!qm.empty()) {
         
-        for(int i=0;i<6;i++){
-            int mx = x + dX[i];
-            int my = y + dY[i];
-            int mz = z + dZ[i];
+        while (!qm.empty()) {
+            auto [z,x,y] = qm.front();
+            q.push({z,x,y});
+            qm.pop();
+        }
+        cnt++;
+        
+        while (!q.empty()) {
+            auto [z,x,y] = q.front();
+            q.pop();
             
-            if(mx < 0 || mx > toN3 - 1 || my < 0 || my > toM3 - 1 || mz < 0 || mz> toH3 - 1 )
-                continue;
-            
-            if(inBoxSizeV3[mz][mx][my] == 0){
-                inBoxSizeV3[mz][mx][my] = inBoxSizeV3[z][x][y] + 1;
-                if(tomatoMaxTimeV3 < inBoxSizeV3[mz][mx][my])
-                    tomatoMaxTimeV3 = inBoxSizeV3[mz][mx][my];
-                tomatoQV3.push({mz,mx,my});
+            for(int i=0; i<6; ++i){
+                int mx = dx[i] + x;
+                int my = dy[i] + y;
+                int mz = dz[i] + z;
+                
+                if (mx<=0 || mx>M || my<=0 || my>N || mz<=0 || mz> H)
+                    continue;
+                
+                if(arr[mz][mx][my] == 0){
+                    qm.push({mz,mx,my});
+                    arr[mz][mx][my] = arr[z][x][y] + 1;
+                }
             }
-            
         }
         
     }
-    
 }
 
+bool check(){
+    for(int k=1; k<=H; ++k){
+        for(int i=1; i<=M; ++i){
+            for(int j=1; j<=N; ++j){
+                
+                if (arr[k][i][j] == 0)
+                    return false;
+            }
+        }
+    }
+    return true;
+}
 
 int main(){
-    cin>>toM3>>toN3>>toH3;
+    fast;
     
-    for(int k=0;k<toH3;k++){
-        for(int i=0; i<toN3;i++){
-            for(int j=0;j<toM3;j++){
-                int input;
-                scanf("%d",&input);
-                inBoxSizeV3[k][i][j] = input;
-                if(input == 1)
-                    tomatoQV3.push({k,i,j});
+    cin>>N>>M>>H;
+    
+    for(int k=1; k<=H; ++k){
+        for(int i=1; i<=M; ++i){
+            for(int j=1; j<=N; ++j){
+                cin>>arr[k][i][j];
+                if(arr[k][i][j] == 1) qm.push({k,i,j});
             }
         }
     }
     
-    toBFSV3();
+    bfs();
     
-    bool tomatoExist = false;
-    for(int k=0;k<toH3;k++){
-        for(int i=0;i<toN3;i++){
-            int *p;
-            p = find(&inBoxSizeV3[k][i][0], &inBoxSizeV3[k][i][toM3], 0);
-            if(p != &inBoxSizeV3[k][i][toM3]){
-                tomatoExist = true;
-                break;
-            }
-        }
-    }
-    
-    if(tomatoExist)
-        cout<<"-1"<<endl;
-    else if( tomatoMaxTimeV3 == 0)
-        cout<<"0"<<endl;
+    if(check())
+        cout<<cnt-1<<"\n";
     else
-        cout<<tomatoMaxTimeV3 - 1<<endl;
-    
+        cout<<"-1\n";
 }
-
-
-

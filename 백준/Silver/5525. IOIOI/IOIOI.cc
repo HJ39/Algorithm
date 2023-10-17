@@ -11,16 +11,22 @@ int main(){
     string input;
     cin>>input;
     
-    string pattern = "I";
-    for(int i=0; i<N; ++i)
-        pattern.append("OI");
-
-    
     int cnt = 0;
-    for(int i=0 ;i<=input.size()-pattern.length(); ++i){
-        if (pattern == input.substr(i,pattern.length())){
-            cnt++;
+    
+    for(int i=0; i<M; ++i){
+        int k=0;
+        if(input[i] == 'O') continue;
+        
+        while(input[i+1] == 'O' and input[i+2] == 'I'){
+            k++;
+            
+            if(k == N){
+                cnt++;
+                k--;
+            }
+            i+=2;
         }
+        
     }
     cout<<cnt<<"\n";
     

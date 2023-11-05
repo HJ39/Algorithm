@@ -25,11 +25,8 @@ struct Queue<T> {
 }
 
 let num = readLine()!.components(separatedBy: " ").map{Int($0)!}
-let N = num[0]
-let M = num[1]
+let (N, M) = (num[0], num[1])
 var arr = Array(repeating: Array(repeating: 0, count: M + 1), count: N + 1)
-let dx = [0,0,1,-1]
-let dy = [1,-1,0,0]
 
 for i in 1...N {
     var list = [Int]()
@@ -39,29 +36,22 @@ for i in 1...N {
 }
 
 var q = Queue<(Int, Int)>()
-func bfs() {
-    q.push((1,1))
-    arr[1][1] = 1
-    
-    while !q.isEmpty {
-        guard let top = q.pop() else {continue}
+q.push((1,1))
+arr[1][1] = 1
 
-        if top.0 == N && top.1 == M{
-            print(arr[top.0][top.1])
-            break
-        }
-        
-        for i in 0...3 {
-            let mx = top.0 + dx[i]
-            let my = top.1 + dy[i]
-            guard mx <= N && my <= M && mx >= 1 && my >= 1 else { continue }
-            if arr[mx][my] == 1 {
-                arr[mx][my] = arr[top.0][top.1] + 1
-                q.push((mx,my))
-            }
+while !q.isEmpty {
+    guard let top = q.pop() else {continue}
+    
+    if top.0 == N && top.1 == M{
+        print(arr[top.0][top.1])
+        break
+    }
+    
+    for i in [(0,1),(0,-1),(1,0),(-1,0)] {
+        let (mx, my) = (top.0 + i.0, top.1 + i.1)
+        if 1...N ~= mx && 1...M ~= my && arr[mx][my] == 1 {
+            arr[mx][my] = arr[top.0][top.1] + 1
+            q.push((mx,my))
         }
     }
 }
-
-bfs()
-

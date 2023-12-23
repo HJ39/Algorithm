@@ -11,23 +11,14 @@ int main(){
     
     int N; cin>>N;
     
+    int res = 0;
+    int finalLast = 0;
     for(int i=0; i<N; ++i) {
         int s,e; cin>>s>>e;
         input.push_back({s,e});
-    }
-    
-    sort(input.begin(), input.end());
-    
-    int res = 0;
-    int finalLast = 0;
-    
-    for(int i=0; i<N; ++i) {
-        auto [s,e] = input[i];
-        
         for(int j=s; j<=e; ++j) {
             check[j]++;
         }
-        
         finalLast = max(finalLast, e);
     }
     

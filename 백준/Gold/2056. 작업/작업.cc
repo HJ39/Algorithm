@@ -1,65 +1,60 @@
 #include <bits/stdc++.h>
-#define fast ios::sync_with_stdio(false),cin.tie(NULL), cout.tie(NULL)
-#define MAXNUM 10'001
+#define fast ios::sync_with_stdio(false), cin.tie(NULL), cout.tie(NULL)
 
 using namespace std;
 
-int N2056;
-vector<int> input2056[MAXNUM];
-int workTime2056[MAXNUM];
-int degree2056[MAXNUM];
-queue<int> q2056;
-int sumWork[MAXNUM];
-int maxTime = 0;
-
-void topologicalSort2056(){
+int* search(vector<int> &timeList, vector<int> &degree, vector<int> nodes[10'001], int endTime[], queue<int> &q) {
     
-    while(!q2056.empty()){
-        int x = q2056.front();
-        q2056.pop();
+    while (!q.empty()) {
+        int top = q.front();
+        q.pop();
         
-        for(int i=0;i<input2056[x].size(); ++i){
-            int y = input2056[x][i];
-            degree2056[y]--;
-            sumWork[y] = max(sumWork[y], sumWork[x] + workTime2056[y]);
-
-            if(degree2056[y] == 0){
-                q2056.push(y);
-            }
+        for(int i=0; i<nodes[top].size(); ++i) {
+            int node = nodes[top][i];
+            degree[node]--;
+            endTime[node] = max(endTime[node], endTime[top] + timeList[node]);
+            if(degree[node] == 0)
+                q.push(node);
         }
     }
+    
+    return endTime;
 }
 
-int main(){
+int main() {
     fast;
     
-    cin>>N2056;
-
-    for(int i=1;i<=N2056;++i){
-        int a,b;
-        cin>>a>>b;
+    int N; cin>>N;
+    vector<int> nodes[10001];
+    vector<int> timeList(N+1);
+    vector<int> degree(N+1);
+    int endTime[N+1];
+    queue<int> q;
+    fill_n(endTime, degree.size(), 0);
+    
+    for(int i=1; i<=N; ++i) {
+        int cnt;
+        cin>>timeList[i]>>cnt;
         
-        workTime2056[i] = a;
-        for(int j=0;j<b;++j){
-            int c;
-            cin>>c;
-            input2056[c].push_back(i);
-            degree2056[i]++;
+        for(int j=1; j<=cnt; ++j) {
+            int node; cin>>node;
+            degree[i]++;
+            nodes[node].push_back(i);
         }
+    }
+    
+    for(int i=1; i<=N; ++i) {
+        if(degree[i] == 0) {
+            q.push(i);
+            endTime[i] = timeList[i];
+        }
+    }
+    
+    int* list = search(timeList, degree, nodes, endTime, q);
+    
+    int res = 0;
+    for(int i=1; i<=N; ++i)
+        res = max(res, list[i]);
+    cout<<res<<"\n";
         
-    }
-    for(int i=1;i<=N2056;++i){
-        if(degree2056[i] == 0)
-            q2056.push(i);
-        sumWork[i] = workTime2056[i];
-    }
-
-    topologicalSort2056();
-    
-    for(int i=1;i<=N2056;++i){
-        maxTime = max(maxTime, sumWork[i]);
-    }
-    
-    cout<<maxTime<<"\n";
-    
 }

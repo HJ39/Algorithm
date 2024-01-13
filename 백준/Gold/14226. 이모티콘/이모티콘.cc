@@ -29,11 +29,9 @@ int bfs() {
             q.push({screen-1, clip, time+1});
         }
         
-        if(screen + clip <= 1000) {
-            if(!check[screen + clip][screen]) {
-                check[screen + clip][screen] = true;
-                q.push({screen + clip, clip, time+1});
-            }
+        if(screen + clip <= 1000 and !check[screen + clip][screen]) {
+            check[screen + clip][screen] = true;
+            q.push({screen + clip, clip, time+1});
         }
     }
     return 0;
